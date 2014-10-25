@@ -1,50 +1,56 @@
-#ifndef __LIST_H__
-#define __LIST_H__
-#include <stdlib.h>
-typedef int Elemtype;
+// List_L.h
+// Copyleft @ weiyulan
 
-struct SqList
+#ifndef __LIST_L_H__
+#define __LIST_L_H__
+#include <stdlib.h>
+#include "List.h"
+
+struct LNode
 {
-    Elemtype *elem;
-    size_t length;
-    size_t listsize;
+    Elemtype data;
+    struct LNode *next;
 };
 
-enum Status {OK, OVERFLOW, FAILED};
+struct LList
+{
+    struct LNode *head;
+    size_t length;
+};
 
-Status InitList_Sq(SqList *L);
+enum Status InitList_L(struct LList *L);
 
-void DestroyList_Sq(SqList *L);
+void DestroyList_L(struct LList *L);
 
-void ClearList_Sq(SqList *L);
+void ClearList_L(struct LList *L);
 
-int ListEmpty_Sq(SqList *L);
+int ListEmpty_L(struct LList *L);
 
-size_t ListLength_Sq(SqList *L);
+size_t ListLength_L(struct LList *L);
 
-Status GetElem_Sq(SqList *L, size_t i, Elemtype* e);
+enum Status GetElem_L(struct LList* L, size_t i, Elemtype* e);
 
-size_t LocateElem_Sq(
-        SqList *L, 
-        Elemtype e, 
-        int (*compare)(Elemtype *a, Elemtype* b));
+size_t LocateElem_L(
+        struct LList* L, 
+        struct LNode e, 
+        int (*compare)(struct LNode* a, struct LNode* b));
 
-Status PriorElem_Sq(
-        SqList *L,
-        Elemtype* cur_e,
-        Elemtype** pre_e);
+enum Status PriorElem_L(
+        struct LList* L,
+        struct LNode* cur_e,
+        struct LNode** pre_e);
 
-Status NextElem_Sq(
-        SqList *L,
-        Elemtype* cur_e,
-        Elemtype** next_e);
+enum Status NextElem_L(
+        struct LList* L,
+        struct LNode* cur_e,
+        struct LNode** next_e);
 
-Status __ExpandStorage_Sq(SqList *L);
+enum Status ListInsert_L(struct LList* L, size_t i, struct LNode e);
 
-Status ListInsert_Sq(SqList *L, size_t i, Elemtype e);
+void ListDelete_L(struct LList *L, size_t i, struct LNode* e);
 
-void ListDelete_Sq(SqList *L, size_t i, Elemtype* e);
+enum Status ListTraverse_L(struct LList *L, int (*visit)(struct LNode *e));
 
-Status ListTraverse(SqList *L, int (*visit)(Elemtype *e));
+void Reverse_L(struct LList* L);
 
-#endif // __LIST_H__
+#endif // __LIST_L_H__

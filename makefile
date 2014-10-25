@@ -1,8 +1,11 @@
-main: List.o main.o
-	gcc List.o main.o -o main -O2 -g
+main: List_Sq.o List_L.o main.o
+	gcc List_Sq.o List_L.o main.o -o main -O2 -g
 
-List.o: List.c List.h
-	gcc -c List.c -O2 -g -o List.o
+List_Sq.o: List_Sq.c List_Sq.h
+	gcc -c List_Sq.c -O2 -g -o List_Sq.o
+
+List_L.o: List_L.c List_L.h
+	gcc -c List_L.c -O2 -g -o List_L.o
 
 main.o: main.c
 	gcc -c main.c -O2 -g -o main.o

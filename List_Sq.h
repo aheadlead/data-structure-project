@@ -1,7 +1,13 @@
-#ifndef __LIST_H__
-#define __LIST_H__
+// List_Sq.h
+// Copyleft @ weiyulan
+
+#ifndef __LIST_SQ_H__
+#define __LIST_SQ_H__
 #include <stdlib.h>
-typedef int Elemtype;
+#include "List.h"
+
+#define LIST_INIT_SIZE 100
+#define LISTINCREMENT 10
 
 struct SqList
 {
@@ -10,41 +16,39 @@ struct SqList
     size_t listsize;
 };
 
-enum Status {OK, OVERFLOW, FAILED};
+enum Status InitList_Sq(struct SqList *L);
 
-Status InitList_Sq(SqList *L);
+void DestroyList_Sq(struct SqList *L);
 
-void DestroyList_Sq(SqList *L);
+void ClearList_Sq(struct SqList *L);
 
-void ClearList_Sq(SqList *L);
+int ListEmpty_Sq(struct SqList *L);
 
-int ListEmpty_Sq(SqList *L);
+size_t ListLength_Sq(struct SqList *L);
 
-size_t ListLength_Sq(SqList *L);
-
-Status GetElem_Sq(SqList *L, size_t i, Elemtype* e);
+enum Status GetElem_Sq(struct SqList *L, size_t i, Elemtype* e);
 
 size_t LocateElem_Sq(
-        SqList *L, 
+        struct SqList *L, 
         Elemtype e, 
         int (*compare)(Elemtype *a, Elemtype* b));
 
-Status PriorElem_Sq(
-        SqList *L,
+enum Status PriorElem_Sq(
+        struct SqList *L,
         Elemtype* cur_e,
         Elemtype** pre_e);
 
-Status NextElem_Sq(
-        SqList *L,
+enum Status NextElem_Sq(
+        struct SqList *L,
         Elemtype* cur_e,
         Elemtype** next_e);
 
-Status __ExpandStorage_Sq(SqList *L);
+enum Status ListInsert_Sq(struct SqList *L, size_t i, Elemtype e);
 
-Status ListInsert_Sq(SqList *L, size_t i, Elemtype e);
+void ListDelete_Sq(struct SqList *L, size_t i, Elemtype* e);
 
-void ListDelete_Sq(SqList *L, size_t i, Elemtype* e);
+enum Status ListTraverse_Sq(struct SqList *L, int (*visit)(Elemtype *e));
 
-Status ListTraverse(SqList *L, int (*visit)(Elemtype *e));
+void Reverse_Sq(struct SqList *L);
 
-#endif // __LIST_H__
+#endif // __LIST_SQ_H__

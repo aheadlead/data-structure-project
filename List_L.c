@@ -1,130 +1,163 @@
-#include "List.h"
+#include "List_L.h"
 #include <assert.h>
 
-Status InitList_Sq(SqList *L)
+enum Status InitList_L(struct LList *L)
 {
-    L->elem = (Elemtype*)malloc(sizeof(Elemtype)*LIST_INIT_SIZE);
-    if (NULL == L->elem)
-        return OVERFLOW;
     L->length = 0;
-    L->listsize = LIST_INIT_SIZE;
+    L->head = NULL;
     return OK;
 }
 
-void DestroyList_Sq(SqList *L)
+void DestroyList_L(struct LList *L)
 {
-    free(L->elem);
-    free(L);
+    struct LNode *p=L->head, *t;
+    while (NULL != p)
+    {
+        t = p->next;
+        free(p);
+        p = t;
+    }
 }
 
-void ClearList_Sq(SqList *L)
+void ClearList_L(struct LList *L)
 {
-    DestroyList_Sq(L);
-    InitList_Sq(L);
+    DestroyList_L(L);
+    InitList_L(L);
 }
 
-int ListEmpty_Sq(SqList *L)
+int ListEmpty_L(struct LList *L)
 {
     return L->length == 0;
 }
 
-size_t ListLength_Sq(SqList *L)
+size_t ListLength_L(struct LList *L)
 {
     return L->length;
 }
 
-Status GetElem_Sq(SqList *L, size_t i, Elemtype* e)
+enum Status GetElem_L(struct LList* L, size_t i, Elemtype* e)
 {
     i--;
-    assert(i < L->length);
-    *e = *(L->elem + i);
+    struct LNode *p=L->head->next;
+    for (; i>0; --i)
+    {
+        p = p->next;
+    }
+    *e = p->data;
     return OK;
 }
 
-size_t LocateElem_Sq(
-        SqList *L, 
-        Elemtype e, 
-        int (*compare)(Elemtype *a, Elemtype* b))
+size_t LocateElem_L(
+        struct LList* L, 
+        struct LNode e, 
+        int (*compare)(struct LNode* a, struct LNode* b))
 {
-    Elemtype* p;
-    for (p=L->elem; p!=(L->elem+L->length); ++p)
+    struct LNode* p=L->head->next;
+    int counter = 1;
+    for (; NULL!=p; p=p->next, counter++)
     {
-        if (compare(&e, p) == 1)
-            return p-L->elem + 1;
+        if (compare(&e, p))
+            return counter;
     }
     return 0;
 }
 
-Status PriorElem_Sq(
-        SqList *L,
-        Elemtype* cur_e,
-        Elemtype** pre_e)
+enum Status PriorElem_L(
+        struct LList* L,
+        struct LNode* cur_e,
+        struct LNode** pre_e)
 {
-    if (cur_e == L->elem)
+    struct LNode* p=L->head;
+    if (cur_e == p)
         return OVERFLOW;
-    *pre_e = cur_e-1;
+    for (; NULL!=p; p=p->next)
+    {
+        if (p->next == cur_e)
+        {
+            *pre_e = p;
+            return OK;
+        }
+    }
+    return FAILED;
+}
+
+enum Status NextElem_L(
+        struct LList* L,
+        struct LNode* cur_e,
+        struct LNode** next_e)
+{
+    *next_e = cur_e->next;
     return OK;
 }
 
-Status NextElem_Sq(
-        SqList *L,
-        Elemtype* cur_e,
-        Elemtype** next_e)
+enum Status ListInsert_L(struct LList* L, size_t i, struct LNode e)
 {
-    if (cur_e == L->elem+L->length-1)
-        return OVERFLOW;
-    *next_e = cur_e+1;
-    return OK;
-}
-
-Status __ExpandStorage_Sq(SqList *L)
-{
-    L->listsize = L->listsize + sizeof(Elemtype)*LISTINCREMENT;
-    L->elem = (Elemtype*)realloc(L->elem, L->listsize);
-    if (NULL == L->elem)
-        return OVERFLOW;
-    return OK;
-}
-
-Status ListInsert_Sq(SqList *L, size_t i, Elemtype e)
-{
-    size_t j;
+    struct LNode* p=L->head;
+    struct LNode* newplace=(struct LNode*)malloc(sizeof(struct LNode));
     i--;
-    if (L->length*sizeof(Elemtype) == L->listsize)
+    for (; i>0; --i)
     {
-        if (OVERFLOW == __ExpandStorage_Sq(L))
-            return OVERFLOW;
+        p = p->next;
     }
-    for (j=L->length; j>i; --j)
-    {
-        *(L->elem + j) = *(L->elem + j-1);
-    }
-    *(L->elem + i) = e;
-    L->length = L->length+1;
+    *newplace = e;
+    newplace->next = p->next;
+    p->next = newplace; 
     return OK;
 }
-    
-void ListDelete_Sq(SqList *L, size_t i, Elemtype* e)
+
+void ListDelete_L(struct LList *L, size_t i, struct LNode* e)
 {
-    size_t j;
+    struct LNode* p=L->head;
+    struct LNode* del;
     i--;
-    *e = *(L->elem + i);
-    L->length = L->length-1;
-    for (j=i; j<L->length; ++j)
+    for (; i>0; --i)
     {
-        *(L->elem + j) = *(L->elem + j+1);
+        p = p->next;
     }
+    del = p->next;
+    p = p->next->next;
+    *e = *del;
+    free(del);
     return;
 }
 
-Status ListTraverse(SqList *L, int (*visit)(Elemtype *e))
+enum Status ListTraverse_L(struct LList *L, int (*visit)(struct LNode *e))
 {
-    size_t i;
-    for (i=0; i<L->length; ++i)
+    struct LNode* p=L->head;
+    for (; NULL!=p; p=p->next)
     {
-        if (OK != visit(L->elem + i))
+        if (OK != visit(p))
             return FAILED;
     }
     return OK;
 }
 
+void __swap_pointer(struct LNode** a, struct LNode** b)
+{
+    struct LNode* tmp=*a;
+    *a = *b;
+    *b = tmp;
+}
+
+void Reverse_L(struct LList* L)
+{
+    struct LNode* next;
+    struct LNode* tmp=NULL;
+    struct LNode* p=L->head->next;
+    for (; ; )
+    {
+        next = p->next;
+        p->next = tmp;
+        tmp = p;
+        if (NULL != next)
+        {
+            p = next;
+        }
+        else
+        {
+            L->head = p;
+            break;
+        }
+    }
+    return;
+}

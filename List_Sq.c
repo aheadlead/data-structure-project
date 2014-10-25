@@ -1,7 +1,10 @@
+// List_Sq.c
+// Copyleft @ weiyulan
+
 #include "List_Sq.h"
 #include <assert.h>
 
-Status InitList_Sq(SqList *L)
+enum Status InitList_Sq(struct SqList *L)
 {
     L->elem = (Elemtype*)malloc(sizeof(Elemtype)*LIST_INIT_SIZE);
     if (NULL == L->elem)
@@ -11,29 +14,28 @@ Status InitList_Sq(SqList *L)
     return OK;
 }
 
-void DestroyList_Sq(SqList *L)
+void DestroyList_Sq(struct SqList *L)
 {
     free(L->elem);
-    free(L);
 }
 
-void ClearList_Sq(SqList *L)
+void ClearList_Sq(struct SqList *L)
 {
     DestroyList_Sq(L);
     InitList_Sq(L);
 }
 
-int ListEmpty_Sq(SqList *L)
+int ListEmpty_Sq(struct SqList *L)
 {
     return L->length == 0;
 }
 
-size_t ListLength_Sq(SqList *L)
+size_t ListLength_Sq(struct SqList *L)
 {
     return L->length;
 }
 
-Status GetElem_Sq(SqList *L, size_t i, Elemtype* e)
+enum Status GetElem_Sq(struct SqList *L, size_t i, Elemtype* e)
 {
     i--;
     assert(i < L->length);
@@ -42,7 +44,7 @@ Status GetElem_Sq(SqList *L, size_t i, Elemtype* e)
 }
 
 size_t LocateElem_Sq(
-        SqList *L, 
+        struct SqList *L, 
         Elemtype e, 
         int (*compare)(Elemtype *a, Elemtype* b))
 {
@@ -55,8 +57,8 @@ size_t LocateElem_Sq(
     return 0;
 }
 
-Status PriorElem_Sq(
-        SqList *L,
+enum Status PriorElem_Sq(
+        struct SqList *L,
         Elemtype* cur_e,
         Elemtype** pre_e)
 {
@@ -66,8 +68,8 @@ Status PriorElem_Sq(
     return OK;
 }
 
-Status NextElem_Sq(
-        SqList *L,
+enum Status NextElem_Sq(
+        struct SqList *L,
         Elemtype* cur_e,
         Elemtype** next_e)
 {
@@ -77,7 +79,7 @@ Status NextElem_Sq(
     return OK;
 }
 
-Status __ExpandStorage_Sq(SqList *L)
+enum Status __ExpandStorage_Sq(struct SqList *L)
 {
     L->listsize = L->listsize + sizeof(Elemtype)*LISTINCREMENT;
     L->elem = (Elemtype*)realloc(L->elem, L->listsize);
@@ -86,7 +88,7 @@ Status __ExpandStorage_Sq(SqList *L)
     return OK;
 }
 
-Status ListInsert_Sq(SqList *L, size_t i, Elemtype e)
+enum Status ListInsert_Sq(struct SqList *L, size_t i, Elemtype e)
 {
     size_t j;
     i--;
@@ -104,7 +106,7 @@ Status ListInsert_Sq(SqList *L, size_t i, Elemtype e)
     return OK;
 }
     
-void ListDelete_Sq(SqList *L, size_t i, Elemtype* e)
+void ListDelete_Sq(struct SqList *L, size_t i, Elemtype* e)
 {
     size_t j;
     i--;
@@ -117,7 +119,7 @@ void ListDelete_Sq(SqList *L, size_t i, Elemtype* e)
     return;
 }
 
-Status ListTraverse(SqList *L, int (*visit)(Elemtype *e))
+enum Status ListTraverse_Sq(struct SqList *L, int (*visit)(Elemtype *e))
 {
     size_t i;
     for (i=0; i<L->length; ++i)
@@ -126,5 +128,22 @@ Status ListTraverse(SqList *L, int (*visit)(Elemtype *e))
             return FAILED;
     }
     return OK;
+}
+
+void __swap(Elemtype* a, Elemtype* b)
+{
+    Elemtype tmp;
+    tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+void Reverse_Sq(struct SqList* L)
+{
+    size_t i;
+    for (i=0; i<L->length/2; ++i)
+    {
+        __swap(L->elem+i, L->elem+L->length-1-i);
+    }
 }
 
