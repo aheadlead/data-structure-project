@@ -3,6 +3,12 @@
 
 '''
 这是一个数据结构课程中，演示树的一个类。
+你可以直观的看到树的形态。
+
+在Python的REPL命令行端执行下面的代码可以看到这个模块更多的说明。
+    import Tree
+    help(Tree)
+
 开发环境：
 OS X 10.10
 Python 2.7.6
@@ -27,7 +33,7 @@ class Tree(object):
     本对象不提供清空的方法，清空树可以简单的使用以下代码：
         dirtyTree = Tree()
 
-    构造树：
+    简单的来秀一把：
     >>> A = Tree('A')
     >>> B = A.locate(A.insert(Tree('B')))
     >>> C = A.locate(A.insert(Tree('C')))
@@ -85,7 +91,6 @@ class Tree(object):
         -
         |       
         JuHua(1)
-
         '''
         subTree.parent = self
         if offset != -1: # 提供了offset的值
@@ -149,10 +154,6 @@ class Tree(object):
         '''
         迭代子树的方法。
 
-        若有这样一棵树root：（图中数字都是ID）
-
-        这个方法使得本类可以这样调用：
-
         >>> Tree.maxID = 0  # 这一行是为了方便通过文档测试，用户不要管这一行
         >>> A = Tree('A')
         >>> A.insert(Tree('B'))
@@ -163,13 +164,14 @@ class Tree(object):
         3
         >>> A.insert(Tree('E'))
         4
-        >>> for child in A:
+        
+        这个方法使得本类可以这样调用：
+        >>> for child in A: # 是不是有点酷
         ...     print child.ID, child.content
         1 B
         2 C
         3 D
         4 E
-
         '''
         return iter(self.childs)
 
@@ -204,7 +206,6 @@ class Tree(object):
         4 E
         5 F
         6 G
-
         '''
         queue = []
         result = []
