@@ -57,8 +57,11 @@ class DirectedGraph(object):
         assert not self.graph[src].has_key(dst), "此边已存在"
         self.graph[src][dst] = weight
 
-    def __getitem__(self, key):
+    def __getitem__(self, key): 
         return self.graph[key]
+
+    def __iter__(self):
+        return iter(self.graph)
 
     # 此函数仅可工作在图的点和边权可json化时
     def loadFromFile(self, filename):

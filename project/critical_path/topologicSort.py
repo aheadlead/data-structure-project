@@ -16,10 +16,10 @@ u'''
 import Queue
 
 class TopologicSort(object):
-    def __init__(self, DG):
-        self.graph = DG.graph
+    # 拓扑排序的参数 DG 是一个 DirectedGraph
+    def __call__(self, DG):
+        self.graph = DG
 
-    def do(self):
         # 计算所有顶点的入度
         inDegree = self.evaluateInDegree()
         
