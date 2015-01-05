@@ -14,7 +14,7 @@
     rand7.txt
     asc.txt
     desc.txt
-每个文件中有 20000 个随机整数。
+每个文件中有 N 个随机整数。
 前八个文件是随机顺序， asc.txt 是升序， desc.txt 是降序。
 '''
 
@@ -24,9 +24,11 @@ import sys
 import os
 import random
 
+N = 5000
+
 def rand():
     ret = []
-    for i in xrange(20000):
+    for i in xrange(N):
         ret.append(random.randint(1, 10000))
     return ret
 
