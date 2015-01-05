@@ -106,7 +106,6 @@ main(int argc, char ** argv)
     // 构造映射表
     // 映射表是将字符映射到一个二进制序列的表
     constructMapping(&tree, vector<int>());
-    printmapping();
     
     // 打开待编码的文件
     FILE *file = fopen(filename.c_str(), "rb");
