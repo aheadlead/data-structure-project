@@ -47,7 +47,8 @@ void HuffmanTree::loadFromFile(char const * filename)
     fin.seekg(0, fin.beg);
 
     char * jsonTree; // jsonTree 是 json 形式的哈夫曼树
-    jsonTree = new char[length];
+    jsonTree = new char[length+1];
+    jsonTree[length] = '\0';
     
     // 读入文件
     fin.read(jsonTree, length);
@@ -73,7 +74,16 @@ void HuffmanTree::parseFromJsonCString(char * json)
 // 。
 void HuffmanTree::parseFromJsonDocumentAtRoot(Document * Json)
 {
-    this->key = (*Json)["key"].GetInt();
+    // 当本节点是叶子节点的时候， key 才会为一个数字，否则会是一个 null 。在这
+    // 里用 -1 表示这个节点不是叶子结点。
+    //
+    // 另外，我不太清楚为什么 vim 的 youcompleteme 插件把我这一片代码标红了的原
+    // 因，实在是没观察出错误啊...
+    if ((*Json)["key"].IsNull()) 
+        this->key = -1;
+    else
+        this->key = (*Json)["key"].GetInt();
+
     this->value = (*Json)["value"].GetInt();
         
     if (!(*Json)["childs"][0].IsNull())
@@ -101,6 +111,8 @@ void HuffmanTree::parseFromJsonDocument(
         GenericValue<rapidjson::UTF8<char>, 
         rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> > * Json)
 {
+    // 当本节点是叶子节点的时候， key 才会为一个数字，否则会是一个 null 。在这
+    // 里用 -1 表示这个节点不是叶子结点。
     if ((*Json)["key"].IsNull())
         this->key = -1;
     else

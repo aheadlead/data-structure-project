@@ -54,6 +54,37 @@ constructMapping(HuffmanTree * tree, vector<int> code)
     return;
 }
 
+// 调试用函数，输出一棵树
+void printtree(HuffmanTree * tree, int level)
+{
+    if (tree == NULL) return;
+    for (int i=0; i<level; ++i) printf(" ");
+    printf("%d\n", tree->key);
+    printtree((tree->childs[0]), level+1);
+    printtree((tree->childs[1]), level+1);
+    fflush(stdout);
+}
+
+// 调试用函数，显示mapping
+void printmapping()
+{
+    for (int i=0; i<256; ++i)
+    {
+        if (mapping[i].size() != 0)
+        {
+            printf("%d\t", i);
+            for (vector<int>::iterator p=mapping[i].begin();
+                    p!=mapping[i].end();
+                    ++p)
+            {
+                printf("%d", *p);
+            }
+            printf("\n");
+        }
+    }
+    fflush(stdout);
+}
+
 int
 main(int argc, char ** argv)
 {
@@ -68,10 +99,6 @@ main(int argc, char ** argv)
         treeFilename = argv[2];
     }
 
-    // 输出两个文件名
-    printf("%s : %s\n", filename.c_str(),
-            treeFilename.c_str());
-
     // 载入哈夫曼树
     HuffmanTree tree;
     tree.loadFromFile(treeFilename.c_str());
@@ -79,6 +106,7 @@ main(int argc, char ** argv)
     // 构造映射表
     // 映射表是将字符映射到一个二进制序列的表
     constructMapping(&tree, vector<int>());
+    printmapping();
     
     // 打开待编码的文件
     FILE *file = fopen(filename.c_str(), "rb");
@@ -87,9 +115,13 @@ main(int argc, char ** argv)
     oBitFile bout((filename + ".hfm").c_str());
     
     // 编码
-    while (true)
+    while (!feof(file))
     {
-        int buffersize = fread(buffer, BUFFERSIZE, 1, file);
+        // TODO 这个 fread() 函数有潜在的性能问题。为了获得读取到的字符数目，我
+        // 将原本的第二的参数与第三个参数进行了调换。因为对 fread 的行为不是太
+        // 清楚，我担心 fread 会进行 BUFFERSIZE 次磁盘IO，这样会大大减慢读取速
+        // 度。
+        int buffersize = fread(buffer, 1, BUFFERSIZE, file);
         for (int i=0; i<buffersize; ++i) // 枚举读入缓冲区的字符
         {
             unsigned char ch = buffer[i]; // 当前字符
@@ -103,8 +135,11 @@ main(int argc, char ** argv)
         }
     }
 
+    printf("%lu", bout.getBitLength());
+
     fclose(file);
     bout.close();
+    fflush(stdout);
 
     return 0;
 }

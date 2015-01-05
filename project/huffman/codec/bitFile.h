@@ -6,16 +6,14 @@
 #include <cstdio>
 #include <cassert>
 
-#define BUFFERSIZE 32*1024*1024 // 32MB
-#undef BUFFERSIZE
-#define BUFFERSIZE 1
+#define bFBUFFERSIZE 32*1024*1024 // 32MB
 
 class BaseBitFile
 {
     public:
         BaseBitFile(char const * filename)
         {
-            this->buffer = new unsigned char [BUFFERSIZE];
+            this->buffer = new unsigned char [bFBUFFERSIZE];
         }
 
         ~BaseBitFile()
@@ -65,7 +63,7 @@ class iBitFile : public BaseBitFile
     public:
         iBitFile(char const * filename) : BaseBitFile(filename)
         {
-            this->bufferpos = BUFFERSIZE;
+            this->bufferpos = bFBUFFERSIZE;
             this->bytepos = 8;
             this->open(filename);
         }
@@ -89,7 +87,7 @@ class iBitFile : public BaseBitFile
         // 取；写入时，文件按块写入。
         void readNextBuffer()
         {
-            fread(this->buffer, BUFFERSIZE, 1, this->hd);
+            fread(this->buffer, bFBUFFERSIZE, 1, this->hd);
             this->bufferpos = 0;
         }
 
@@ -98,7 +96,7 @@ class iBitFile : public BaseBitFile
             int ret = 0;
             if (this->bytepos == 8) // 如果当前字节的 8 个位都读完了
             {
-                if (this->bufferpos == BUFFERSIZE) // 如果当前缓冲区已读完
+                if (this->bufferpos == bFBUFFERSIZE) // 如果当前缓冲区已读完
                 {
                     this->readNextBuffer();
                 }
@@ -125,6 +123,7 @@ class oBitFile : public BaseBitFile
             this->bufferpos = 0;
             this->bitLength = 0;
             this->bytepos = 0;
+            this->byte = 0x00;
             this->open(filename);
         }
 
@@ -140,7 +139,7 @@ class oBitFile : public BaseBitFile
         //
         // 为了提高性能，顺序读取和顺序写入文件使用了缓冲区。读取时，文件按块读
         // 取；写入时，文件按块写入。
-        void writeNextBuffer(size_t length=BUFFERSIZE)
+        void writeNextBuffer(size_t length=bFBUFFERSIZE)
         {
             fwrite(this->buffer, length, 1, this->hd);
             this->bufferpos = 0;
@@ -152,7 +151,7 @@ class oBitFile : public BaseBitFile
             {
                 this->buffer[this->bufferpos] = this->byte;
                 this->bufferpos++;
-                if (this->bufferpos == BUFFERSIZE) // 如果当前缓冲区已写满
+                if (this->bufferpos == bFBUFFERSIZE) // 如果当前缓冲区已写满
                 {
                     this->writeNextBuffer();
                 }
