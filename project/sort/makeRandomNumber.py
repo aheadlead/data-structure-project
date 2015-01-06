@@ -24,7 +24,7 @@ import sys
 import os
 import random
 
-N = 5000
+N = 20000
 
 def rand():
     ret = []

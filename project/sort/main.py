@@ -7,6 +7,7 @@
     -----------------------------------
     插入排序         insertionSort.py
     希尔排序         shellSort.py
+    冒泡排序         bubbleSort.py
     快速排序         quickSort.py
     选择排序         selectionSort.py
     堆排序           heapSort.py
@@ -34,6 +35,7 @@ if __name__ != "__main__":
 sortAlgorithm = [ 
         { "name": u"插入排序", "module": "insertionSort" },
         { "name": u"希尔排序", "module": "shellSort" },
+        { "name": u"冒泡排序", "module": "bubbleSort" },
         { "name": u"快速排序", "module": "quickSort" },
         { "name": u"选择排序", "module": "selectionSort" },
         { "name": u"堆排序", "module": "heapSort" },
@@ -79,9 +81,9 @@ for sample in samples:
     for module in sortAlgorithm:
         print u"正在以" + module["name"] + u"算法测试测试用例" + sample["filename"]
         timeList = timeit.repeat(stmt="run()", \
-                setup="from __main__ import sample, module, run", repeat=1,
+                setup="from __main__ import sample, module, run", repeat=3,
                 number=1)
-        row.append("%.2f" % (sum(timeList)/len(timeList)))
+        row.append("%.3f" % (sum(timeList)/len(timeList)))
     x.add_row(row)
 
 print x

@@ -3,23 +3,18 @@
 '''选择排序。'''
 
 def sort(L):
-    ans = [] 
-    isSelected = [False] * len(L)
+    ans = list(L)
 
-    for round_ in xrange(len(L)):
+    for round_ in xrange(len(ans)):
 
-        minimum = "infinity" # 在 Python 中，字符串比任何整数都要大
-        minimumIndex = -1
+        minimum = ans[round_]
+        minimumIndex = round_
 
-        for index, number in enumerate(L):
-            if isSelected[index]:
-                continue
-            if number < minimum:
-                minimum = number
+        for index in xrange(round_, len(ans)):
+            if ans[index] < minimum:
+                minimum = ans[index]
                 minimumIndex = index
-        
-        isSelected[minimumIndex] = True
-        ans.append(minimum)
+        ans[round_], ans[minimumIndex] = ans[minimumIndex], ans[round_]
     
     return ans
     
