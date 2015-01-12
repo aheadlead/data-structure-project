@@ -41,7 +41,7 @@ string filename, treeFilename;
 size_t bitLength; // 输入文件的比特位数量
 
 unsigned char buffer[BUFFERSIZE]; // 输出文件的缓冲区
-size_t bufferpos = 0; // 缓冲区指针
+unsigned int bufferpos = 0; // 缓冲区指针
 vector<int> mapping[256]; // 映射表（未使用）
 
 FILE * file; // 输出文件的指针
@@ -54,7 +54,7 @@ commitBuffer(size_t length)
 }
 
 // 写入一个字符到 buffer
-inline void
+void
 writeToBuffer(unsigned char ch)
 {
     buffer[bufferpos] = ch;
@@ -62,6 +62,7 @@ writeToBuffer(unsigned char ch)
     if (bufferpos == BUFFERSIZE) // 缓冲区满了
     {
         commitBuffer(BUFFERSIZE);
+        bufferpos = 0;
     }
 }
 
@@ -180,3 +181,5 @@ main(int argc, char ** argv)
 
     return 0;
 }
+
+
