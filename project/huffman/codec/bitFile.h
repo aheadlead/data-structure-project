@@ -11,7 +11,7 @@
 class BaseBitFile
 {
     public:
-        BaseBitFile(char const * filename)
+        BaseBitFile()
         {
             this->buffer = new unsigned char [bFBUFFERSIZE];
         }
@@ -61,7 +61,7 @@ class BaseBitFile
 class iBitFile : public BaseBitFile
 {
     public:
-        iBitFile(char const * filename) : BaseBitFile(filename)
+        iBitFile(char const * filename) : BaseBitFile()
         {
             this->bufferpos = bFBUFFERSIZE;
             this->bytepos = 8;
@@ -118,7 +118,7 @@ class iBitFile : public BaseBitFile
 class oBitFile : public BaseBitFile
 {
     public:
-        oBitFile(char const * filename) : BaseBitFile(filename)
+        oBitFile(char const * filename) : BaseBitFile()
         {
             this->bufferpos = 0;
             this->bitLength = 0;
